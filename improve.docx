@@ -1,0 +1,169 @@
+# LỘ TRÌNH ƯU TIÊN CÁC TÍNH NĂNG CHƯA TRIỂN KHAI
+## Agent Harness + 9Router
+
+Trạng thái ban đầu: tất cả các mục dưới đây đều CHƯA TRIỂN KHAI.
+
+Thực hiện lần lượt. Sau mỗi mục, cập nhật nhật ký: đã làm gì, file thay đổi, kết quả kiểm tra, vấn đề còn lại và bước tiếp theo.
+
+## 1. Quản lý Git và hoàn tác
+
+Mục tiêu: agent sửa code mà không làm mất công việc của người dùng.
+
+- Kiểm tra Git status trước khi làm việc.
+- Bảo vệ thay đổi chưa commit.
+- Dùng branch hoặc worktree riêng khi phù hợp.
+- Lưu revision bắt đầu và diff của nhiệm vụ.
+- Hoàn tác riêng thay đổi của agent.
+- Chỉ commit, push hoặc tạo pull request khi được yêu cầu.
+
+Hoàn thành khi: agent sửa được một nhiệm vụ và hoàn tác được mà vẫn giữ nguyên thay đổi có sẵn của người dùng.
+
+## 2. Quyền thực thi và bảo mật
+
+Mục tiêu: kiểm soát những gì agent được phép làm.
+
+- Giới hạn phạm vi file, lệnh, mạng và credential.
+- Kiểm tra quyền bằng mã trước khi thực thi công cụ.
+- Chặn truy cập vượt phạm vi, kể cả qua symlink.
+- Che secret trong log và báo cáo.
+- Yêu cầu phê duyệt cho thao tác vượt quyền.
+- Có cơ chế dừng tác vụ và tiến trình con.
+- Không cho nội dung tài liệu hoặc website tự cấp quyền.
+
+Hoàn thành khi: thao tác hợp lệ chạy được, thao tác vượt quyền bị chặn và có bằng chứng kiểm tra.
+
+## 3. Môi trường thực thi tái lập
+
+Mục tiêu: chạy cùng dự án một cách nhất quán và giảm ảnh hưởng lên máy chính.
+
+- Khóa phiên bản dependency.
+- Tạo môi trường riêng cho từng dự án.
+- Ghi lại runtime và công cụ đã sử dụng.
+- Kiểm tra dependency trước khi chạy.
+- Có tùy chọn container cho tác vụ cần cô lập.
+- Dọn môi trường tạm có kiểm soát.
+
+Hoàn thành khi: dựng lại môi trường và chạy được cùng bộ kiểm tra từ cấu hình đã lưu.
+
+## 4. Kiểm soát ngân sách và tài nguyên
+
+Mục tiêu: tránh tác vụ chạy vô hạn hoặc tiêu tốn ngoài dự kiến.
+
+- Giới hạn thời gian, lượt gọi model và token khi đo được.
+- Giới hạn số tác vụ đồng thời và đầu ra công cụ.
+- Phát hiện vòng lặp không tiến triển.
+- Cảnh báo hoặc dừng khi đạt ngưỡng.
+- Ghi mức sử dụng theo nhiệm vụ.
+- Phân biệt chi phí ước tính với thanh toán thực tế.
+
+Hoàn thành khi: tác vụ vượt giới hạn được dừng an toàn, lưu trạng thái và báo rõ lý do.
+
+## 5. Bộ đánh giá chất lượng agent
+
+Mục tiêu: biết thay đổi hệ thống có giúp agent làm tốt hơn không.
+
+- Tạo các nhiệm vụ mẫu về sửa lỗi và thêm tính năng.
+- Xác định tiêu chí thành công có thể kiểm tra.
+- Đo kết quả kiểm tra, tỷ lệ hoàn thành, thời gian và chi phí.
+- Có kiểm thử provider giả lập và kiểm tra thật riêng biệt.
+- So sánh trước/sau khi đổi model, prompt hoặc runtime.
+
+Hoàn thành khi: chạy lại được bộ đánh giá và có báo cáo để phát hiện suy giảm chất lượng.
+
+## 6. Sao lưu, khôi phục và nâng cấp dữ liệu
+
+Mục tiêu: bảo vệ dữ liệu trước khi bổ sung bộ nhớ và tự động hóa.
+
+- Tách dữ liệu lâu dài khỏi mã ứng dụng.
+- Xuất/nhập trạng thái và cấu hình không chứa secret.
+- Sao lưu và kiểm tra khôi phục.
+- Quản lý phiên bản schema và migration.
+- Sao lưu trước cập nhật có thay đổi dữ liệu.
+- Có chính sách lưu giữ và dọn log.
+
+Hoàn thành khi: phục hồi được dữ liệu trên môi trường mới và kiểm tra tính toàn vẹn.
+
+## 7. Bộ nhớ theo dự án
+
+Mục tiêu: agent nhớ thông tin hữu ích giữa các phiên.
+
+- Tách lịch sử phiên, checkpoint, bộ nhớ dự án và tùy chọn người dùng.
+- Lưu quy ước code, quyết định kiến trúc và vấn đề đã xác nhận.
+- Ghi nguồn, phạm vi và thời gian cập nhật.
+- Tìm kiếm thông tin liên quan theo nhiệm vụ.
+- Hỗ trợ xem, sửa, xóa và xuất bộ nhớ.
+- Xử lý thông tin cũ, trùng hoặc mâu thuẫn.
+- Không lưu secret hoặc suy đoán như sự thật.
+
+Hoàn thành khi: phiên mới truy xuất đúng thông tin của dự án, không lẫn dữ liệu dự án khác.
+
+## 8. Nhận và tra cứu tài liệu
+
+Mục tiêu: dùng tài liệu làm nguồn kiến thức có thể kiểm chứng.
+
+- Hỗ trợ Markdown/TXT trước, PDF/DOCX sau.
+- Trích xuất nội dung và lưu phiên bản nguồn.
+- Giữ vị trí trích dẫn theo trang, mục hoặc đoạn.
+- Tìm kiếm nội dung liên quan.
+- Phát hiện tài liệu đã thay đổi.
+- Xử lý nội dung tài liệu như dữ liệu không đáng tin cậy.
+- Chỉ bổ sung embeddings/vector search khi tìm kiếm cơ bản chưa đáp ứng.
+
+Hoàn thành khi: trả lời hoặc trích yêu cầu từ tài liệu kèm vị trí nguồn kiểm tra được.
+
+## 9. Chuyển tài liệu thành kế hoạch
+
+Mục tiêu: biến yêu cầu thành các đầu việc rõ ràng.
+
+- Trích xuất yêu cầu, thời hạn và tiêu chí hoàn thành.
+- Phát hiện nội dung thiếu, mâu thuẫn hoặc chưa rõ.
+- Chia công việc thành bước và xác định phụ thuộc.
+- Liên kết đầu việc với tài liệu nguồn.
+- Cho phép chỉnh sửa và xác nhận kế hoạch.
+- Phân tích tác động khi tài liệu thay đổi.
+
+Hoàn thành khi: tạo được kế hoạch có nguồn, phụ thuộc và tiêu chí nghiệm thu cho từng đầu việc.
+
+## 10. Workflow nhiều bước
+
+Mục tiêu: thực thi kế hoạch có thể theo dõi và phục hồi.
+
+- Định nghĩa bước, đầu vào, đầu ra và điều kiện hoàn thành.
+- Chạy theo quan hệ phụ thuộc.
+- Lưu trạng thái sau mỗi bước.
+- Hỗ trợ tạm dừng, hủy và tiếp tục.
+- Phân loại bước có thể retry an toàn.
+- Chống thực thi trùng các hành động có tác dụng phụ.
+- Có bước phê duyệt khi cần.
+
+Hoàn thành khi: workflow bị ngắt có thể tiếp tục mà không lặp lại hành động đã hoàn thành.
+
+## 11. Worker chạy nền và lập lịch
+
+Mục tiêu: chạy công việc khi người dùng không mở CLI.
+
+- Worker hoạt động độc lập với giao diện.
+- Lịch chạy một lần hoặc định kỳ, có timezone.
+- Chống chạy chồng và nhận việc trùng.
+- Xử lý worker bị ngắt và lịch bị lỡ.
+- Tạm dừng, sửa hoặc hủy lịch.
+- Lưu kết quả từng lần chạy.
+- Đề xuất lịch từ kế hoạch; chỉ kích hoạt trong phạm vi được ủy quyền.
+
+Hoàn thành khi: tác vụ chạy đúng lịch, khởi động lại không tạo lần chạy trùng và có chính sách rõ khi máy tắt.
+
+## 12. Thông báo và tích hợp sự kiện
+
+Mục tiêu: nhận công việc từ hệ thống khác và báo kết quả.
+
+- Thông báo hoàn tất, thất bại hoặc cần quyết định.
+- Tích hợp Git, CI và hệ thống quản lý công việc.
+- Nhận webhook, xác thực nguồn và chống sự kiện trùng.
+- Có giao diện plugin/tool; hỗ trợ MCP khi phù hợp.
+- Chỉ gửi thông báo hoặc thực hiện hành động ngoài qua kết nối đã cấp quyền.
+
+Hoàn thành khi: một sự kiện hợp lệ tạo đúng một tác vụ và gửi kết quả qua kênh đã cấu hình.
+
+## 13. Tự động triển khai ứng dụng
+
+Mục tiêu: đưa thay đổi đã kiểm tra tới môi trường được cấp quyền

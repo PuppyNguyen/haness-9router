@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="haness-token" content="__HANESS_SESSION_TOKEN__">
+  <meta name="theme-color" content="#f4f5f2">
+  <title>Haness · Agent Workspace</title>
+  <link rel="stylesheet" href="/app.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Thanh điều hướng">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">h</span><span>haness<span class="brand-muted">/agent</span></span></div>
+      <button class="new-task-button" id="focusComposer"><span aria-hidden="true">＋</span> Tác vụ mới <kbd>⌘ K</kbd></button>
+      <div class="sidebar-label"><span>TÁC VỤ</span><span id="taskCount">0</span></div>
+      <nav id="taskList" class="task-list" aria-label="Danh sách tác vụ"></nav>
+      <div class="sidebar-footer">
+        <span class="status-dot" id="serverDot"></span>
+        <div><strong id="serverState">Đang kết nối…</strong><small id="serverModel">Haness local</small></div>
+        <button class="icon-button" id="refreshButton" title="Làm mới" aria-label="Làm mới">↻</button>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <div class="breadcrumb" aria-label="Workspace hiện tại"><span class="workspace-label">Workspace hiện tại</span><strong id="workspaceName">Đang tải…</strong><button class="workspace-path" id="workspacePath" type="button" title="Sao chép đường dẫn workspace" aria-label="Sao chép đường dẫn workspace"><span id="workspacePathText">Đang tải đường dẫn…</span> <span aria-hidden="true">⧉</span></button></div>
+        <div class="topbar-meta"><span class="connection"><i></i><span id="routerState">Chạy cục bộ</span></span><button class="text-button" id="routerCheck">Kiểm tra 9Router</button><button class="text-button" id="workspaceButton">Git diff</button></div>
+      </header>
+
+      <section class="content" aria-live="polite">
+        <section class="welcome" id="welcomePanel">
+          <div class="eyebrow"><span class="eyebrow-line"></span> CODING AGENT · 9ROUTER</div>
+          <h1>Xin chào.<br><span>Bắt đầu một việc mới.</span></h1>
+          <p class="welcome-copy">Mô tả thay đổi bạn cần. Haness sẽ đọc repository, lập kế hoạch, sửa code và báo lại các bước kiểm tra.</p>
+          <div class="composer" id="composerCard">
+            <div class="task-options">
+              <label>Tên tác vụ<input id="taskNameInput" type="text" maxlength="120" placeholder="Ví dụ: sửa luồng đăng nhập"></label>
+              <label>Thư mục làm việc<div class="workspace-picker-row"><input id="taskWorkspaceInput" type="text" spellcheck="false" aria-label="Đường dẫn workspace"><button class="button" id="browseWorkspace" type="button">Chọn thư mục</button></div></label>
+            </div>
+            <label class="sr-only" for="taskInput">Yêu cầu coding agent</label>
+            <textarea id="taskInput" rows="3" maxlength="20000" placeholder="Ví dụ: Tìm lỗi trong luồng đăng nhập, viết test tái hiện rồi sửa lỗi…"></textarea>
+            <div class="composer-bottom"><span><span class="sparkle">✳</span> Quyền lệnh theo cấu hình hiện tại</span><button id="submitTask" class="send-button">Gửi yêu cầu <span aria-hidden="true">↗</span></button></div>
+          </div>
+          <div class="quick-hints"><span>Gợi ý</span><button data-prompt="Đọc hướng dẫn repository, kiểm tra test hiện có và đề xuất kế hoạch sửa lỗi.">Sửa lỗi và kiểm tra</button><button data-prompt="Tìm cấu trúc module, giải thích luồng xử lý chính và các điểm cần chú ý.">Khám phá repository</button><button data-prompt="Xem Git diff và tóm tắt các thay đổi hiện tại.">Rà soát thay đổi</button></div>
+          <div class="feature-row"><div><b>01</b><span>Đọc & tìm kiếm</span></div><div><b>02</b><span>Lập kế hoạch</span></div><div><b>03</b><span>Sửa & kiểm chứng</span></div></div>
+        </section>
+
+        <dialog class="directory-dialog" id="directoryDialog" aria-labelledby="directoryTitle">
+          <form method="dialog" class="directory-dialog-header"><div><div class="section-caption">CHỌN WORKSPACE</div><h2 id="directoryTitle">Chọn thư mục làm việc</h2></div><button class="icon-button" value="cancel" aria-label="Đóng">×</button></form>
+          <label class="directory-path-label" for="directoryPath">Đường dẫn đầy đủ</label>
+          <div class="workspace-picker-row"><input id="directoryPath" type="text" spellcheck="false"><button class="button" id="openDirectory" type="button">Mở</button></div>
+          <div class="directory-current"><span id="directoryCurrent"></span><button class="button" id="useDirectory" type="button">Dùng thư mục này</button></div>
+          <div id="directoryList" class="directory-list" aria-live="polite"></div>
+          <p class="directory-help">Chỉ thư mục được chọn mới được dùng làm phạm vi file của tác vụ.</p>
+        </dialog>
+
+        <section class="task-view hidden" id="taskPanel">
+          <div class="task-heading"><div><div class="eyebrow"><span class="eyebrow-line"></span> TASK DETAIL</div><h1 id="taskTitle">Tác vụ</h1><p id="taskMeta"></p></div><div class="task-actions"><button class="button button-quiet hidden" id="resumeTask">Tiếp tục</button><button class="button button-danger hidden" id="stopTask">Dừng tác vụ</button></div></div>
+          <div class="status-banner" id="taskStatusBanner"><span class="status-dot"></span><span id="taskStatusText">Đang tải trạng thái…</span></div>
+          <div class="request-card"><div class="section-caption">YÊU CẦU</div><p id="taskRequest"></p></div>
+          <div class="result-card hidden" id="finalAnswerCard"><div class="section-caption">TRẢ LỜI CUỐI</div><pre id="finalAnswer"></pre></div>
+          <div class="activity-header"><div><div class="section-caption">TIẾN TRÌNH</div><h2>Hoạt động của agent</h2></div><span id="eventCount">0 sự kiện</span></div>
+          <div class="event-list" id="eventList"></div>
+        </section>
+
+        <section class="diff-panel hidden" id="diffPanel" role="dialog" aria-modal="true" aria-labelledby="diffTitle">
+          <div class="diff-header"><div><div class="section-caption">REPOSITORY REVIEW</div><h2 id="diffTitle">Git status & diff</h2></div><button class="icon-button" id="closeDiff" aria-label="Đóng">×</button></div>
+          <h3>Git status</h3><pre id="gitStatus" class="code-block">Đang tải…</pre><h3>Thay đổi</h3><pre id="gitDiff" class="code-block">Chưa tải diff.</pre>
+        </section>
+      </section>
+      <div class="toast hidden" id="toast" role="status"></div>
+    </main>
+  </div>
+</body>
+</html>

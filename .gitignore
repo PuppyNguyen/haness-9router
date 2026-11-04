@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.py[cod]
+.coverage
+.pytest_cache/
+.agent-harness-local/
+web-ui/node_modules/

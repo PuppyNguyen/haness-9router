@@ -1,0 +1,12 @@
+import { WorkspacePicker } from './WorkspacePicker.jsx';
+import { ModelPicker } from './ModelPicker.jsx';
+
+export function TaskComposer(props) {
+  return <section class="welcome" id="welcomePanel"><div class="eyebrow"><span class="eyebrow-line" /> CODING AGENT · 9ROUTER</div><h1>Xin chào.<br /><span>Bắt đầu một việc mới.</span></h1><p class="welcome-copy">Mô tả thay đổi bạn cần. Haness sẽ đọc repository, lập kế hoạch, sửa code và báo lại các bước kiểm tra.</p>
+    <form class="composer" onSubmit={props.onSubmit}><div class="task-options"><label>Tên tác vụ<input value={props.name} maxLength={120} placeholder="Ví dụ: sửa luồng đăng nhập" onInput={(e) => props.setName(e.currentTarget.value)} /></label><WorkspacePicker value={props.workspace} defaultWorkspace={props.defaultWorkspace} onChange={props.setWorkspace} /></div>
+      <ModelPicker models={props.models} value={props.model} disabled={!props.connected} onChange={props.onModelChange} />
+      <label class="sr-only" for="taskInput">Yêu cầu coding agent</label><textarea id="taskInput" value={props.request} rows="3" maxLength={20000} disabled={!props.connected} placeholder={props.connected ? 'Ví dụ: Tìm lỗi, viết test tái hiện rồi sửa lỗi…' : 'Kết nối 9Router để bắt đầu tác vụ'} onInput={(e) => props.setRequest(e.currentTarget.value)} onKeyDown={(e) => { if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); props.onSubmit(e); } }} />
+      <div class="composer-bottom"><span><span class="sparkle">✳</span> Quyền lệnh theo cấu hình hiện tại</span><button id="submitTask" class="send-button" type="submit" disabled={!props.connected || !props.model || props.busy}>Gửi yêu cầu <span aria-hidden="true">↗</span></button></div>
+    </form><div class="quick-hints"><span>Gợi ý</span><button type="button" disabled={!props.connected} onClick={() => props.setRequest('Đọc hướng dẫn repository, kiểm tra test hiện có và đề xuất kế hoạch sửa lỗi.')}>Sửa lỗi và kiểm tra</button><button type="button" disabled={!props.connected} onClick={() => props.setRequest('Tìm cấu trúc module, giải thích luồng xử lý chính và các điểm cần chú ý.')}>Khám phá repository</button><button type="button" disabled={!props.connected} onClick={() => props.setRequest('Xem Git diff và tóm tắt các thay đổi hiện tại.')}>Rà soát thay đổi</button></div><div class="feature-row"><div><b>01</b><span>Đọc & tìm kiếm</span></div><div><b>02</b><span>Lập kế hoạch</span></div><div><b>03</b><span>Sửa & kiểm chứng</span></div></div>
+  </section>;
+}
